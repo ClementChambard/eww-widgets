@@ -1,0 +1,71 @@
+(defvar music-player-show-volume false)
+(defvar not-music-player-show-volume true)
+
+(defwidget music-player-volume[]
+  (eventbox :onhover "${eww} update music-player-show-volume=true & ${eww} update not-music-player-show-volume=false"
+            :onhoverlost "${eww} update music-player-show-volume=false & ${eww} update not-music-player-show-volume=true"
+            :halign "start"
+    (box :class "music-player-volume"
+         :orientation "h"
+         :space-evenly false
+          (label :halign "left" :class "music-player-volume-icon" :text music-volume-icon)
+          (revealer :transition "slideright"
+                    :reveal music-player-show-volume
+                    :duration "350ms"
+            (scale :class "music-volume-scale" :orientation "h" :active true 
+                   :min 0 :max 100 
+                   :onchange "./scripts/music-player volume set {}" 
+                   :value music-volume)
+      ))))
+
+(defwidget music[]
+  (eventbox :onclick "pkill ncmpcpp || alacritty -e ncmpcpp&"
+    (box :orientation "v"
+         :space-evenly false
+         :class "music-player"
+      (box :class "music-player-current"
+           :space-evenly false
+        (box :class "music-player-thumbnail" 
+             :halign "start" 
+             :valign "center" 
+             :style "background-image: url('${music-cover}');")
+        (box :class "music-player-current-text"
+             :orientation "v"
+             :halign "start"
+          
+          (label :class "music-player-title" :halign "start" :limit-width 24 :text music-title)
+          (label :class "music-player-album" :halign "start" :limit-width 24 :text music-album)
+          (label :class "music-player-artist" :halign "start" :limit-width 24 :text music-artist)))
+      (box
+        (scale :class "music-player-track" :min 0 :max 101 :value music-track :active false))
+      (box :class "music-player-buttons"
+        (box :class "music-player-ctrls"
+             :halign "left"
+             :space-evenly false
+          (music-player-volume)
+          (revealer :reveal not-music-player-show-volume :transition "slideright" :duration "350ms"
+            (box
+          (button :halign "left" :class "music-player-random ${music-player-random-class}" :onclick "scripts/music-player randomtoggle" "")
+          (button :halign "left" :class "music-player-next" :onclick "scripts/music-player repeatcycle" music-player-repeat-icon)
+            )
+          )
+        )
+        (box :class "music-player-media-btns"
+             :halign "center"
+          (button :class "music-player-prev" :onclick "scripts/music-player prev" "")
+          (button :class "music-player-toggle ${music-toggle-class}" :onclick "scripts/music-player toggle" music-toggle-icon)
+          (button :class "music-player-next" :onclick "scripts/music-player next" ""))
+        (label :class "music-player-time" :halign "end" :text music-time)))))
+
+(defpoll music-title :interval "1s" "scripts/music-player title")
+(defpoll music-album :interval "1s" "scripts/music-player album")
+(defpoll music-artist :interval "1s" "scripts/music-player artist")
+(defpoll music-time :interval "1s" "scripts/music-player time")
+(defpoll music-track :interval "1s" "scripts/music-player percent")
+(defpoll music-toggle-icon :interval "1s" "scripts/music-player icon")
+(defpoll music-toggle-class :interval "1s" "scripts/music-player class")
+(defpoll music-cover :interval "2s" "scripts/music-player cover")
+(defpoll music-player-random-class :interval "1s" "scripts/music-player randomclass")
+(defpoll music-player-repeat-icon :interval "1s" "scripts/music-player repeaticon")
+(defpoll music-volume-icon :interval "1s" "scripts/music-player volume icon")
+(defpoll music-volume :interval "1s" "scripts/music-player volume get")

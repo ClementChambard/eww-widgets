@@ -1,0 +1,159 @@
+@import "../common/colors.scss";
+
+* {
+  all: unset;
+  transition: 60ms ease-in;
+}
+
+tooltip {
+  color: #b8bdc9;
+  background-color: $bg;
+  border: 1px solid $gray;
+}
+
+.bar {
+  font-family: "Jetbrains mono nerd font";
+  background-color: $bg;
+  margin: 10px 15px 15px 15px;
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.start-box {
+  margin-left: 0.5rem;
+}
+
+.start-eventbox {
+  font-family: Noto Sans, "Font Awesome 6 Free";
+  font-size: 16px;
+  color: $bg;
+  background-color: $blue;
+  border-radius: 8px;
+  transition: all 0.5s cubic-bezier(0.55, -0.68, 0.48, 1.68);
+}
+
+.start-eventbox:hover {
+  color: $bg;
+  background-color: $mauve;
+}
+
+.start-btn {
+  padding: 0.45rem 1.1rem;
+}
+
+.works {
+  font-size: 18px;
+  font-family: "Font Awesome 6 Free Solid";
+  border-radius: 8px;
+
+  button:hover {
+    color: $mauve;
+  }
+
+  .0,
+  .01,
+  .02,
+  .03,
+  .04,
+  .05,
+  .06,
+  .011,
+  .022,
+  .033,
+  .044,
+  .055,
+  .066 {
+  }
+
+  /* Unoccupied */
+  .0 {
+    color: #313547;
+  }
+
+  /* Occupied */
+  .01,
+  .02,
+  .03,
+  .04,
+  .05,
+  .06,
+  .07,
+  .08,
+  .09,
+  .010 {
+    color: $dark-blue;
+  }
+
+  /* Focused */
+  .011,
+  .022,
+  .033,
+  .044,
+  .055,
+  .066,
+  .077,
+  .088,
+  .099,
+  .01010 {
+    color: $blue;
+  }
+}
+
+.window-box {
+  font-size: 14px;
+  font-weight: bold;
+  background-color: $blue;
+  color: $bg;
+  border-radius: 8px;
+  padding: 0.25rem 0.6rem;
+  transition: all 0.5s cubic-bezier(0.55, -0.68, 0.48, 1.68);
+}
+
+.window-name-label {
+  transition: all 0.5s cubic-bezier(0.55, -0.68, 0.48, 1.68);
+}
+
+.icon-module__icon {
+  transition: all 0.5s cubic-bezier(0.55, -0.68, 0.48, 1.68);
+}
+
+.sys {
+  font-size: 14px;
+  background-color: $blue;
+  color: $bg;
+  border-radius: 8px;
+  padding: 0.44rem 0.6rem;
+
+  box {
+    padding: 0.4rem 0.6rem;
+  }
+
+  .wifi-on {
+    color: $bg;
+  }
+
+  .wifi-off {
+    color: $gray;
+  }
+}
+
+.time-box {
+  margin-right: 0.5rem;
+}
+
+.time-eventbox {
+  font-weight: bold;
+  font-size: 14px;
+  color: $bg;
+  background-color: $mauve;
+  border-radius: 8px;
+}
+
+.time-eventbox:hover {
+  color: $bg;
+  background-color: $blue;
+}
+
+.time-label {
+  padding: 0.25rem 0.6rem;
+}

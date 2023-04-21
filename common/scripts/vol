@@ -1,0 +1,63 @@
+#!/bin/bash
+
+CACHE_DIR="$HOME/.cache/eww"
+animate="$HOME/.config/eww/fool_moon/common/scripts/animations"
+delta=2
+
+function percent () {
+	echo $(amixer get Master | grep -oE '[0-9]{1,3}?%' | head -1 | sed 's/%//')
+}
+
+function icon() {
+	# Get the current volume level
+	local volume=$(amixer get Master | grep -oE '[0-9]{1,3}?%' | head -1 | sed 's/%//')
+
+	# Check if the volume is muted
+	local mute=$(amixer get Master | grep -oE '\[(on|off)\]' | head -1 | sed 's/\[//;s/\]//')
+
+	if [ "$mute" = "off" ]; then
+		echo ""
+	elif (( volume >= 60 )); then
+		echo ""
+	elif (( volume >= 20 )); then
+		echo ""
+	elif (( volume <= 20 )); then
+		echo ""
+	fi
+}
+
+function set_vol() {
+	local val=$(printf "%.0f\n" "$1")
+	#pamixer --set-volume $val
+	amixer -D pulse sset Master $val%
+}
+
+function toggle_mute() {
+	amixer set Master toggle
+}
+
+function follow() {
+	local scalar=$(percent)
+	$animate run -i "vol" -s $scalar -e "ease_out_expo"
+	local v=$(percent)
+	echo $v
+	while sleep 0.1; do
+		local nv=$(percent)
+		[[ $v -ne $nv ]] && v=$nv && echo $nv
+	done
+}
+
+function change() {
+	[ "$1" = "up" ] && amixer -D pulse sset Master $delta%+ || amixer -D pulse sset Master $delta%-
+}
+
+
+case "$1" in
+	"percent") percent;;
+	"icon") icon;;
+	"set") set_vol "$2";;
+	"follow") follow "$2";;
+	"change") change "$2";;
+	"toggle-mute") toggle_mute;;
+	*) echo "Unknown command";;
+esac

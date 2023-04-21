@@ -1,0 +1,49 @@
+#!/bin/bash
+
+CACHE_DIR="$HOME/.cache/eww"
+animate="$HOME/.config/eww/fool_moon/common/scripts/animations"
+
+function percent () {
+	echo $(amixer get Capture | grep -oE '[0-9]{1,3}?%' | head -1 | sed 's/%//')
+}
+
+function icon() {
+	local mute=$(amixer get Capture | grep -oE '\[(on|off)\]' | head -1 | sed 's/\[//;s/\]//')
+	[ "$mute" = "off" ] && echo "" || echo ""
+}
+
+function set_val() {
+	local val=$(printf "%.0f\n" "$1")
+	amixer -D pulse sset Capture $val%
+}
+
+function toggle_mute() {
+	amixer set Capture toggle
+}
+
+function follow() {
+	local scalar=$(percent)
+	$animate run -i "mic" -s $scalar -e "ease_out_expo"
+
+	local m=$(percent)
+	echo $m
+	while sleep 0.1; do
+		local nm=$(percent)
+		[[ $m -ne $nm ]] && m=$nm && echo $nm
+	done
+}
+
+function change() {
+	[ "$1" = "up" ] && amixer -D pulse sset Capture 1%+ || amixer -D pulse sset Capture 1%-
+}
+
+
+case "$1" in
+	"percent") percent;;
+	"icon") icon;;
+	"set") set_val "$2";;
+	"follow") follow "$2";;
+	"change") change "$2";;
+	"toggle-mute") toggle_mute;;
+	*) echo "Unknown command";;
+esac

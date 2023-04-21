@@ -1,0 +1,176 @@
+#!/bin/bash
+
+function has_player() {
+    $(mpc -q) && return 0 || return 1
+}
+
+function title() {
+    if has_player; then
+        echo $(mpc -f "%title%" | head -n 1)
+    else
+        echo "Nothing Playing"
+    fi
+}
+
+function album() {
+    if has_player; then
+        echo $(mpc -f "%album%" | head -n 1)
+    else
+        echo
+    fi
+}
+
+function artist() {
+    if has_player; then
+        echo $(mpc -f "%artist%" | head -n 1)
+    else
+        echo
+    fi
+}
+
+function ttime() {
+    if has_player; then
+        echo $(mpc status "%currenttime% / %totaltime%")
+    else
+        echo "--:-- / --:--"
+    fi
+}
+
+function class() {
+    [[ has_player && "$(mpc status | grep "\[.*\]" -o)" = "[playing]" ]] && echo "pause" || echo "play"
+}
+
+function icon() {
+    [[ has_player && "$(mpc status | grep "\[.*\]" -o)" = "[playing]" ]] && echo "" || echo ""
+}
+
+function toggle() {
+    if has_player; then
+        mpc toggle
+    fi
+}
+
+function prev() {
+    if has_player; then
+        mpc prev
+    fi
+}
+
+function next() {
+    if has_player; then
+        mpc next
+    fi
+}
+
+function percent() {
+    if has_player; then
+        echo $(mpc status %percenttime% | sed s/%//)
+    else
+        echo 0
+    fi
+}
+
+MUSIC_DIR="/media/HDD/Musique"
+COVER="assets/cover.png"
+
+function cover() {
+	ffmpeg -i "${MUSIC_DIR}/$(mpc current -f %file%)" "${COVER}" -y &> /dev/null
+	STATUS=$?
+
+	# Check if the file has a embbeded album art
+	if [ "$STATUS" -eq 0 ];then
+		echo "$COVER"
+	else
+		echo "assets/music.png"
+	fi
+}
+
+function random_class() {
+    if has_player; then
+        [[ "$(mpc status | tail -n 1 | awk '{print $6}')" = "on" ]] && echo active || echo inactive
+    else
+        echo inactive
+    fi
+}
+
+function random_toggle() {
+    mpc random > /dev/null
+}
+
+function repeat_icon() {
+    REPEAT=0
+    if [[ "$(mpc status | tail -n 1 | awk '{print $4}')" = "on" ]]; then
+        if [[ "$(mpc status | tail -n 1 | awk '{print $8}')" = "on" ]];
+        then REPEAT=2
+        else REPEAT=1
+        fi
+    fi
+
+    if [[ $REPEAT = 0 ]]; then
+        echo 
+    else if [[ $REPEAT = 1 ]]; then
+            echo 
+        else
+            echo 
+        fi
+    fi
+}
+
+function repeat_cycle() {
+    REPEAT=0
+    if [[ "$(mpc status | tail -n 1 | awk '{print $4}')" = "on" ]]; then
+        if [[ "$(mpc status | tail -n 1 | awk '{print $8}')" = "on" ]];
+        then REPEAT=2
+        else REPEAT=1
+        fi
+    fi
+
+    if [[ $REPEAT = 0 ]]; then
+        mpc repeat > /dev/null
+    else if [[ $REPEAT = 1 ]]; then
+            mpc single > /dev/null
+        else
+            mpc single > /dev/null
+            mpc repeat > /dev/null
+        fi
+    fi
+}
+
+function volume_icon() {
+    VOLUME=$(mpc volume | awk '{print $2}' | sed s/%//)
+    if [[ $VOLUME = 0 ]]; then echo ""; return; fi
+    if [[ $VOLUME < 20 ]]; then echo ""; return; fi
+    if [[ $VOLUME < 50 ]]; then echo ""; return; fi
+
+    echo ""
+}
+ 
+function volume() {
+    case "$1" in 
+        "get") echo $(mpc volume | awk '{print $2}' | sed s/%//);;
+        "set") mpc volume $2 > /dev/null;;
+        "icon") volume_icon;;
+        *) echo "Unrecognized command";;
+    esac
+}
+
+case "$1" in
+    "title") title;;
+    "artist") artist;;
+    "album") album;;
+    "time") ttime;;
+    "toggle") toggle;;
+    "icon") icon;;
+    "percent") percent;;
+    "prev") prev;;
+    "next") next;;
+    "class") class;;
+    "cover") cover;;
+    "randomtoggle") random_toggle;;
+    "randomclass") random_class;;
+    "repeatcycle") repeat_cycle;;
+    "repeaticon") repeat_icon;;
+    "volume") volume $2 $3;;
+    *) echo "Unrecognized command";;
+esac
+
