@@ -11,3 +11,8 @@
   (box :class "sep"
        :valign "center"))
 
+(defwindow musicwin
+   :monitor 0
+   :stacking "fg"
+   :geometry (geometry :x "5px" :y "55px" :width "1px" :anchor "top left")
+(music))
